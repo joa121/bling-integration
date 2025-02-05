@@ -243,3 +243,34 @@ router.get('/logout', (req, res) => {
 });
 
 module.exports = router;
+// Servir Nota Fiscal (PDF)
+router.get('/nota_fiscal/:filename', checkAdminAuth, (req, res) => {
+  const fileName = req.params.filename;
+  const filePath = path.join(__dirname, '..', 'uploads', 'nota_fiscal', fileName);
+
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader("Content-Disposition", "inline; filename=" + fileName);
+
+  res.sendFile(filePath, (err) => {
+      if (err) {
+          console.error("❌ Erro ao carregar o PDF da nota fiscal:", err);
+          res.status(500).send("Erro ao carregar o PDF.");
+      }
+  });
+});
+
+// Servir Conhecimento de Transporte (PDF)
+router.get('/conhecimento/:filename', checkAdminAuth, (req, res) => {
+  const fileName = req.params.filename;
+  const filePath = path.join(__dirname, '..', 'uploads', 'conhecimento', fileName);
+
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader("Content-Disposition", "inline; filename=" + fileName);
+
+  res.sendFile(filePath, (err) => {
+      if (err) {
+          console.error("❌ Erro ao carregar o PDF do conhecimento de transporte:", err);
+          res.status(500).send("Erro ao carregar o PDF.");
+      }
+  });
+});
