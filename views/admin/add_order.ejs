@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adicionar Pedido</title>
+    <link rel="stylesheet" href="/public/css/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: space-between;
+            padding: 10px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-group {
+            width: 48%;
+        }
+
+        .full-width {
+            width: 100%;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+        }
+
+        td {
+            padding: 8px;
+            background-color: white;
+        }
+
+        .actions a {
+            padding: 5px 10px;
+            margin: 2px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .edit-btn {
+            background-color: #ffc107;
+            color: black;
+            border-radius: 5px;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 16px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Adicionar Novo Pedido</h1>
+
+        <% if (erro) { %>
+            <p style="color: red; text-align: center;"><%= erro %></p>
+        <% } %>
+
+        <form action="/admin/add_order" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="numero_pedido">Número do Pedido:</label>
+                <input type="text" id="numero_pedido" name="numero_pedido" required>
+            </div>
+
+            <div class="form-group">
+                <label for="cliente">Cliente:</label>
+                <select id="cliente" name="cliente" required>
+                    <% clients.forEach(client => { %>
+                        <option value="<%= client.nome %>"><%= client.nome %></option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="responsavel">Responsável:</label>
+                <input type="text" id="responsavel" name="responsavel" required>
+            </div>
+
+            <div class="form-group">
+                <label for="faturado">Faturado para:</label>
+                <input type="text" id="faturado" name="faturado" required>
+            </div>
+
+            <div class="form-group">
+                <label for="data_prevista">Data Prevista:</label>
+                <input type="date" id="data_prevista" name="data_prevista">
+            </div>
+
+            <div class="form-group full-width">
+                <label for="comentarios">Comentários:</label>
+                <textarea id="comentarios" name="comentarios"></textarea>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="nota_fiscal">Nota Fiscal (PDF):</label>
+                <input type="file" id="nota_fiscal" name="nota_fiscal" accept=".pdf">
+            </div>
+
+            <div class="form-group full-width">
+                <label for="conhecimento_transporte">Conhecimento de Transporte (PDF):</label>
+                <input type="file" id="conhecimento_transporte" name="conhecimento_transporte" accept=".pdf">
+            </div>
+
+            <button type="submit">Adicionar Pedido</button>
+        </form>
+
+    <h2>Pedidos Existentes</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nº Pedido</th>
+                <th>Cliente</th>
+                <th>Responsável</th>
+                <th>Faturado</th>
+                <th>Status</th>
+                <th>Data Prevista</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (typeof pedidos !== 'undefined' && pedidos.length > 0) { %>
+                <% pedidos.forEach(pedido => { %>
+                    <tr>
+                        <td><%= pedido._id %></td>
+                        <td><%= pedido.numero_pedido %></td>
+                        <td><%= pedido.cliente %></td>
+                        <td><%= pedido.responsavel %></td>
+                        <td><%= pedido.faturado %></td>
+                        <td><%= pedido.status %></td>
+                        <td><%= pedido.data_prevista ? new Date(pedido.data_prevista).toLocaleDateString() : 'Não definida' %></td>
+                        <td>
+                            <a href="/admin/update_order/<%= pedido._id %>">✏️ Editar</a> |
+                            <a href="/admin/delete_order/<%= pedido._id %>" onclick="return confirm('Tem certeza que deseja excluir?');">❌ Excluir</a>
+                        </td>
+                    </tr>
+                <% }) %>
+            <% } else { %>
+                <tr>
+                    <td colspan="8">Nenhum pedido encontrado.</td>
+                </tr>
+            <% } %>
+        </tbody>
+       
+    </table>
+
+    <a href="/admin/dashboard">🔙 Voltar ao Dashboard</a>
+</body>
+</html>

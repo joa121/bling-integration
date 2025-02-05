@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Cliente - Dashboard</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/header.ejs') %>
+  <div class="container">
+    <h2>Bem-vindo, <%= usuario.nome %></h2>
+    <a href="/client/logout">Sair</a>
+    <h3>Seus Pedidos</h3>
+    <table>
+      <tr>
+        <th>Nº Pedido</th>
+        <th>Status</th>
+        <th>Data Prevista</th>
+        <th>Faturado</th>
+        <th>Nota Fiscal</th>
+        <th>Conhecimento de Transporte</th>
+      </tr>
+      <% pedidos.forEach(pedido => { %>
+        <tr>
+          <td><%= pedido.numero_pedido %></td>
+          <td><%= pedido.status %></td>
+          <td><%= pedido.data_prevista ? pedido.data_prevista.toISOString().split('T')[0] : '-' %></td>
+          <td><%= pedido.faturado || '-' %></td>
+          <td>
+            <% if (pedido.nota_fiscal) { %>
+              <a href="/uploads/nota_fiscal/<%= pedido.nota_fiscal %>" download>Baixar</a>
+            <% } else { %>
+              -
+            <% } %>
+          </td>
+          <td>
+            <% if (pedido.conhecimento_transporte) { %>
+              <a href="/uploads/conhecimento/<%= pedido.conhecimento_transporte %>" download>Baixar</a>
+            <% } else { %>
+              -
+            <% } %>
+          </td>
+        </tr>
+      <% }) %>
+    </table>
+    <a href="/client/request_order">Solicitar Novo Pedido</a>
+  </div>
+</body>
+</html>

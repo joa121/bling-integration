@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Upload de PDF</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Upload de PDF para Criação de Pedido</h2>
+    <form method="post" action="/admin/upload_pdf" enctype="multipart/form-data">
+      <label>Selecione o PDF:</label>
+      <input type="file" name="pdfFile" accept="application/pdf" required>
+      <input type="submit" value="Enviar PDF">
+    </form>
+    <a href="/admin/dashboard">Voltar para Dashboard</a>
+  </div>
+</body>
+</html>

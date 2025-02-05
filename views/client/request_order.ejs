@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Solicitar Pedido</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/header.ejs') %>
+  <div class="container">
+    <h2>Solicitar Novo Pedido</h2>
+    <% if (erro) { %>
+      <p class="error"><%= erro %></p>
+    <% } %>
+    <form method="post" action="/client/request_order">
+      <label>Nº Pedido:</label>
+      <input type="text" name="numero_pedido" required>
+      
+      <label>Faturado (Nome para faturamento):</label>
+      <input type="text" name="faturado" required>
+      
+      <label>Comentários:</label>
+      <textarea name="comentarios"></textarea>
+      
+      <input type="submit" value="Solicitar Pedido">
+    </form>
+    <a href="/client/dashboard">Voltar para Dashboard</a>
+  </div>
+</body>
+</html>

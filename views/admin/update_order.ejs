@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Atualizar Pedido</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <h2>Atualizar Pedido - <%= pedido.numero_pedido %></h2>
+  <% if (erro) { %>
+    <p style="color:red;"><%= erro %></p>
+  <% } %>
+  <form method="post" action="/admin/update_order/<%= pedido._id %>" enctype="multipart/form-data">
+    <label>Status:</label>
+    <select name="status">
+      <option value="Aprovado" <%= pedido.status === 'Aprovado' ? 'selected' : '' %>>Aprovado</option>
+      <option value="Em Produção" <%= pedido.status === 'Em Produção' ? 'selected' : '' %>>Em Produção</option>
+      <option value="Saiu para entrega" <%= pedido.status === 'Saiu para entrega' ? 'selected' : '' %>>Saiu para entrega</option>
+      <option value="Entregue" <%= pedido.status === 'Entregue' ? 'selected' : '' %>>Entregue</option>
+    </select><br><br>
+    
+    <label>Data Prevista (AAAA-MM-DD):</label>
+    <input type="date" name="data_prevista" value="<%= pedido.data_prevista ? pedido.data_prevista.toISOString().split('T')[0] : '' %>"><br><br>
+    
+    <label>Comentários:</label><br>
+    <textarea name="comentarios" rows="4" cols="50"><%= pedido.comentarios %></textarea><br><br>
+    
+    <label>Upload Nova Nota Fiscal:</label>
+    <input type="file" name="nota_fiscal"><br>
+    <% if (pedido.nota_fiscal) { %>
+      Arquivo atual: <%= pedido.nota_fiscal %><br>
+    <% } %>
+    <br>
+    
+    <label>Upload Novo Conhecimento de Transporte:</label>
+    <input type="file" name="conhecimento_transporte"><br>
+    <% if (pedido.conhecimento_transporte) { %>
+      Arquivo atual: <%= pedido.conhecimento_transporte %><br>
+    <% } %>
+    <br>
+    
+    <input type="submit" value="Atualizar Pedido">
+  </form>
+  <br>
+  <a href="/admin/dashboard">Voltar para Dashboard</a>
+</body>
+</html>

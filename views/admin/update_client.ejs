@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Alterar Cliente</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+   <div class="container">
+    <h2>Alterar Cliente</h2>
+    <% if (erro) { %>
+      <p class="error"><%= erro %></p>
+    <% } %>
+    <form method="post" action="/admin/update_client/<%= client._id %>">
+      <label>Nome:</label>
+      <input type="text" name="nome" value="<%= client.nome %>" required>
+      
+      <label>Email:</label>
+      <input type="email" name="email" value="<%= client.email %>" required>
+      
+      <label>Nova Senha:</label>
+      <input type="password" name="senha">
+      <p>Deixe em branco se não quiser alterar a senha.</p>
+      
+      <input type="submit" value="Atualizar Cliente">
+    </form>
+    <a href="/admin/clients">Voltar para a lista de clientes</a>
+  </div>
+</body>
+</html>

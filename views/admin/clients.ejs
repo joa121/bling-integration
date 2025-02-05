@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Clientes Cadastrados</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+  
+  <h2>Clientes Cadastrados</h2>
+  <table>
+    <tr>
+      <th>Nome</th>
+      <th>Email</th>
+      <th>Ações</th>
+    </tr>
+    <% clients.forEach(client => { %>
+      <tr>
+        <td><%= client.nome %></td>
+        <td><%= client.email %></td>
+        <td>
+          <a href="/admin/update_client/<%= client._id %>">Alterar</a>
+        </td>
+      </tr>
+    <% }) %>
+  </table>
+  <a href="/admin/dashboard">Voltar para Dashboard</a>
+  
+</body>
+</html>

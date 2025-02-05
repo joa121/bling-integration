@@ -1,0 +1,52 @@
+<!-- Exemplo de Dashboard do Admin (views/admin/dashboard.ejs) -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Admin - Dashboard</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/header.ejs') %>
+  
+  <h2>Bem-vindo, <%= usuario.nome %></h2>
+  <nav>
+    <a href="/admin/add_order">Adicionar Novo Pedido</a> | 
+    <a href="/admin/add_client">Cadastrar Novo Cliente</a> | 
+    <a href="/admin/clients">Ver Clientes</a> | 
+    <a href="/admin/upload_pdf">Upload PDF</a> |
+    <a href="/admin/importar_pedidos_bling">Importar Pedidos do Bling</a>
+    <a href="/admin/logout">Sair</a>
+  </nav>
+  
+  <h3>Pedidos</h3>
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Nº Pedido</th>
+      <th>Cliente</th>
+      <th>Responsável</th>
+      <th>Faturado</th>
+      <th>Status</th>
+      <th>Data Prevista</th>
+      <th>Ações</th>
+    </tr>
+    <% pedidos.forEach(pedido => { %>
+      <tr>
+        <td><%= pedido._id %></td>
+        <td><%= pedido.numero_pedido %></td>
+        <td><%= pedido.cliente %></td>
+        <td><%= pedido.responsavel || '-' %></td>
+        <td><%= pedido.faturado || '-' %></td>
+        <td><%= pedido.status %></td>
+        <td><%= pedido.data_prevista ? pedido.data_prevista.toISOString().split('T')[0] : '-' %></td>
+        <td>
+          <a href="/admin/update_order/<%= pedido._id %>">Editar</a> | 
+          <a href="/admin/delete_order/<%= pedido._id %>" onclick="return confirm('Tem certeza que deseja excluir este pedido?');">Excluir</a>
+        </td>
+      </tr>
+    <% }) %>
+  </table>
+  
+</body>
+</html>
