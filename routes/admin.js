@@ -87,10 +87,10 @@ router.post('/add_order', checkAdminAuth, upload.fields([
   let conhecimento_transporte = req.files['conhecimento_transporte'] ? req.files['conhecimento_transporte'][0].filename : null;
   
   try {
-    // Ao cadastrar, armazena tanto o número exibido quanto o original para evitar duplicidade
+    // Ao cadastrar, armazena tanto o número exibido quanto o número original importado
     const pedido = new Pedido({
-      numero_pedido,
-      numero_pedido_original: numero_pedido,
+      numero_pedido,                              // Número exibido (pode ser alterado posteriormente)
+      numero_pedido_original: numero_pedido,       // Número importado (usado para verificação de duplicidade)
       cliente,
       responsavel,
       faturado,
@@ -133,7 +133,8 @@ router.post('/update_order/:id', checkAdminAuth, upload.fields([
     pedido.data_prevista = data_prevista || null;
     pedido.comentarios = comentarios;
     
-    // Atualiza o número de pedido exibido para a Sanhidrel, se informado
+    // Atualiza apenas o número exibido para a Sanhidrel,
+    // mantendo inalterado o número importado (numero_pedido_original)
     if (numero_pedido_sanhidrel && numero_pedido_sanhidrel.trim() !== '') {
       pedido.numero_pedido = numero_pedido_sanhidrel;
     }

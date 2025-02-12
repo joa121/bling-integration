@@ -10,7 +10,7 @@ const API_KEY = "642490a35e7301d50bbaa473cd329a9d0f560627506d7a2ccc9d161ffd715a8
 const API_URL = 'https://bling.com.br/Api/v2/pedidos/json/';
 
 // Configurações:
-const LIMITE_PEDIDOS = 10; // Apenas os últimos 10 pedidos
+const LIMITE_PEDIDOS = 20; // Apenas os últimos 10 pedidos
 const dataHoje = moment().format("DD/MM/YYYY"); // Data de hoje
 
 // Mapeamento de status

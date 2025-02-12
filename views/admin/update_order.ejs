@@ -11,7 +11,7 @@
     <p style="color:red;"><%= erro %></p>
   <% } %>
   <form method="post" action="/admin/update_order/<%= pedido._id %>" enctype="multipart/form-data">
-    <!-- Campo para atualizar o número do pedido (exibido para a Sanhidrel) -->
+    <!-- Campo para atualizar o número do pedido exibido para a Sanhidrel -->
     <label>Número do Pedido (Sanhidrel):</label>
     <input type="text" name="numero_pedido_sanhidrel" value="<%= pedido.numero_pedido %>"><br><br>
     
