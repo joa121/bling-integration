@@ -37,7 +37,7 @@ async function sincronizarPedidos() {
         const response = await axios.get(API_URL, {
             params: {
                 apikey: API_KEY,
-                pagina: 1, // Apenas a primeira página, pois só queremos os 10 mais recentes
+                pagina: 1,
                 limite: LIMITE_PEDIDOS,
                 ordenar: 'desc',
                 filters: `dataEmissao[${dataHoje} TO ${dataHoje}]`
@@ -56,18 +56,25 @@ async function sincronizarPedidos() {
             const pedido = pedidoObj.pedido;
 
             // Tenta extrair o número do pedido da sanhidrel a partir das informações adicionais
-            // Exemplo de padrão: "00836/2025"
             let numeroPedidoSistema;
             const regex = /(\d{5}\/\d{4})/;
-            if (pedido.informacoesAdicionais) {
+            if (pedido.informacoesAdicionais && typeof pedido.informacoesAdicionais === 'string') {
+                console.log("Informações adicionais:", pedido.informacoesAdicionais);
                 const match = pedido.informacoesAdicionais.match(regex);
                 if (match) {
                     numeroPedidoSistema = match[0];
+                    console.log(`Número do pedido extraído: ${numeroPedidoSistema}`);
+                } else {
+                    console.log("Padrão não encontrado nas informações adicionais.");
                 }
+            } else {
+                console.log("Campo 'informacoesAdicionais' não encontrado ou não é string:", pedido.informacoesAdicionais);
             }
+
             // Se não encontrou, usa o número padrão retornado pela API
             if (!numeroPedidoSistema) {
                 numeroPedidoSistema = pedido.numero;
+                console.log(`Usando número padrão do pedido: ${numeroPedidoSistema}`);
             }
 
             // Verifica se o campo vendedor contém "sanhidrel" (case-insensitive)
@@ -94,7 +101,7 @@ async function sincronizarPedidos() {
             const novoPedido = new Pedido({
                 numero_pedido: numeroPedidoSistema,
                 cliente: "SANHIDREL",
-                faturado: nomeCliente, // Aqui sempre utiliza o nome do cliente
+                faturado: nomeCliente,
                 status: statusPedido,
                 data_prevista: pedido.dataSaida ? new Date(pedido.dataSaida) : null
             });
@@ -105,6 +112,7 @@ async function sincronizarPedidos() {
         }
 
         console.log(`✅ Sincronização concluída. ${pedidosImportados} novos pedidos importados.`);
+
     } catch (error) {
         console.error("❌ Erro ao buscar pedidos:", error.message);
     }
