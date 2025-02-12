@@ -1,4 +1,3 @@
-// routes/admin.js
 const express = require('express');
 const router = express.Router();
 const Usuario = require('../models/Usuario');
@@ -29,7 +28,7 @@ function checkAdminAuth(req, res, next) {
   if (req.session && req.session.usuario && req.session.usuario.tipo === 'admin') {
     next();
   } else {
-    // Opcional: se a requisição espera PDF, envia status 401 em vez de redirecionar
+    // Se a requisição espera PDF, envia status 401
     if (req.headers.accept && req.headers.accept.indexOf('application/pdf') !== -1) {
       return res.status(401).send("Não autorizado");
     }
@@ -88,8 +87,10 @@ router.post('/add_order', checkAdminAuth, upload.fields([
   let conhecimento_transporte = req.files['conhecimento_transporte'] ? req.files['conhecimento_transporte'][0].filename : null;
   
   try {
+    // Ao cadastrar, armazena tanto o número exibido quanto o original para evitar duplicidade
     const pedido = new Pedido({
       numero_pedido,
+      numero_pedido_original: numero_pedido,
       cliente,
       responsavel,
       faturado,
@@ -123,7 +124,7 @@ router.post('/update_order/:id', checkAdminAuth, upload.fields([
   { name: 'nota_fiscal', maxCount: 1 },
   { name: 'conhecimento_transporte', maxCount: 1 }
 ]), async (req, res) => {
-  const { status, data_prevista, comentarios } = req.body;
+  const { status, data_prevista, comentarios, numero_pedido_sanhidrel } = req.body;
   try {
     const pedido = await Pedido.findById(req.params.id);
     if (!pedido) return res.send('Pedido não encontrado.');
@@ -131,6 +132,11 @@ router.post('/update_order/:id', checkAdminAuth, upload.fields([
     pedido.status = status;
     pedido.data_prevista = data_prevista || null;
     pedido.comentarios = comentarios;
+    
+    // Atualiza o número de pedido exibido para a Sanhidrel, se informado
+    if (numero_pedido_sanhidrel && numero_pedido_sanhidrel.trim() !== '') {
+      pedido.numero_pedido = numero_pedido_sanhidrel;
+    }
     
     if (req.files['nota_fiscal']) {
       pedido.nota_fiscal = req.files['nota_fiscal'][0].filename;
