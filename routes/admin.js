@@ -29,6 +29,10 @@ function checkAdminAuth(req, res, next) {
   if (req.session && req.session.usuario && req.session.usuario.tipo === 'admin') {
     next();
   } else {
+    // Opcional: se a requisição espera PDF, envia status 401 em vez de redirecionar
+    if (req.headers.accept && req.headers.accept.indexOf('application/pdf') !== -1) {
+      return res.status(401).send("Não autorizado");
+    }
     res.redirect('/admin/login');
   }
 }
@@ -223,6 +227,7 @@ router.post('/add_client', checkAdminAuth, async (req, res) => {
     res.render('admin/add_client', { erro: 'Erro ao cadastrar novo cliente.' });
   }
 });
+
 const { sincronizarPedidos } = require('../config/blingIntegration'); // Certifique-se que este arquivo existe e está correto
 
 // Rota para importar pedidos do Bling
@@ -242,7 +247,6 @@ router.get('/logout', (req, res) => {
   res.redirect('/admin/login');
 });
 
-module.exports = router;
 // Servir Nota Fiscal (PDF)
 router.get('/nota_fiscal/:filename', checkAdminAuth, (req, res) => {
   const fileName = req.params.filename;
@@ -274,3 +278,5 @@ router.get('/conhecimento/:filename', checkAdminAuth, (req, res) => {
       }
   });
 });
+
+module.exports = router;
