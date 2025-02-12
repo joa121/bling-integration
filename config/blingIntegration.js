@@ -54,19 +54,33 @@ async function sincronizarPedidos() {
 
         for (const pedidoObj of pedidos) {
             const pedido = pedidoObj.pedido;
-            const numeroPedido = parseInt(pedido.numero, 10);
 
-            // Verifica se o campo vendedor (vendedor) contém "sanhidrel" (case-insensitive)
+            // Tenta extrair o número do pedido da sanhidrel a partir das informações adicionais
+            // Exemplo de padrão: "00836/2025"
+            let numeroPedidoSistema;
+            const regex = /(\d{5}\/\d{4})/;
+            if (pedido.informacoesAdicionais) {
+                const match = pedido.informacoesAdicionais.match(regex);
+                if (match) {
+                    numeroPedidoSistema = match[0];
+                }
+            }
+            // Se não encontrou, usa o número padrão retornado pela API
+            if (!numeroPedidoSistema) {
+                numeroPedidoSistema = pedido.numero;
+            }
+
+            // Verifica se o campo vendedor contém "sanhidrel" (case-insensitive)
             const vendedor = (pedido.vendedor || "").toLowerCase();
             if (!vendedor.includes("sanhidrel")) {
-                console.log(`🔸 Pedido ${numeroPedido} ignorado (vendedor diferente: ${pedido.vendedor || "Não informado"}).`);
+                console.log(`🔸 Pedido ${numeroPedidoSistema} ignorado (vendedor diferente: ${pedido.vendedor || "Não informado"}).`);
                 continue;
             }
 
             // Verifica se o pedido já existe no banco de dados
-            const pedidoExiste = await Pedido.findOne({ numero_pedido: numeroPedido });
+            const pedidoExiste = await Pedido.findOne({ numero_pedido: numeroPedidoSistema });
             if (pedidoExiste) {
-                console.log(`⚠️ Pedido ${numeroPedido} já existe no banco.`);
+                console.log(`⚠️ Pedido ${numeroPedidoSistema} já existe no banco.`);
                 continue;
             }
 
@@ -78,20 +92,19 @@ async function sincronizarPedidos() {
 
             // Cria o novo pedido; ajuste os campos conforme o seu modelo
             const novoPedido = new Pedido({
-                numero_pedido: numeroPedido,
+                numero_pedido: numeroPedidoSistema,
                 cliente: "SANHIDREL",
-                faturado: nomeCliente, // Aqui agora sempre pega o nome do cliente
+                faturado: nomeCliente, // Aqui sempre utiliza o nome do cliente
                 status: statusPedido,
                 data_prevista: pedido.dataSaida ? new Date(pedido.dataSaida) : null
             });
 
             await novoPedido.save();
-            console.log(`✅ Pedido ${numeroPedido} importado com sucesso.`);
+            console.log(`✅ Pedido ${numeroPedidoSistema} importado com sucesso.`);
             pedidosImportados++;
         }
 
         console.log(`✅ Sincronização concluída. ${pedidosImportados} novos pedidos importados.`);
-
     } catch (error) {
         console.error("❌ Erro ao buscar pedidos:", error.message);
     }
